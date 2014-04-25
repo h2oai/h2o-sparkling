@@ -36,4 +36,10 @@ javaOptions in run ++= Seq("-Xmx4g", "-Xms4g")
 // For debugging from Eclipse
 //javaOptions in run += "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=1044"
 
+// Provides a dedicated task to launch plain H2O without Spark demo BUT
+// containing Spark demo jars on classpath (to access Spark classes and demo methods). 
+lazy val runH2O = taskKey[Unit]("Run H2O node")
 
+fullRunTask(runH2O, Runtime, "water.Boot")
+
+fork in runH2O := true
