@@ -18,9 +18,12 @@ resolvers += "Cloudera Repository" at "https://repository.cloudera.com/artifacto
 /* Dependencies - %% appends Scala version to artifactId */
 libraryDependencies += "ai.h2o" % "h2o-core" % "2.5-SNAPSHOT"
 
-libraryDependencies += "org.apache.spark" %% "spark-core" % "1.0.0-SNAPSHOT"  // Spark-CORE: do not forget %% to select spark-core distribution reflecting Scala version
+libraryDependencies += "org.apache.spark" %% "spark-core" % "1.0.0-SNAPSHOT"  % "provided" // Spark-CORE: do not forget %% to select spark-core distribution reflecting Scala version
 
-libraryDependencies += "org.apache.spark" %% "spark-sql" % "1.0.0-SNAPSHOT"  // Spark-SQL
+libraryDependencies += "org.apache.spark" %% "spark-sql" % "1.0.0-SNAPSHOT"  % "provided"  // Spark-SQL
+
+// Put back compile time "provided" dependencies
+run in Compile <<= Defaults.runTask(fullClasspath in Compile, mainClass in (Compile, run), runner in (Compile, run))
 
 /* Setup run
    - Fork in run

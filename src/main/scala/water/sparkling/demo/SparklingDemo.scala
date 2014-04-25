@@ -35,7 +35,7 @@ object SparklingDemo {
     H2O.main(args)
     try {
       // Execute a simple demo
-      prostateDemo(/*frameExtractor = DistributedFrameExtractor*/)
+      prostateDemo(/*frameExtractor = DistributedFrameExtractor, */local=true)
     } catch { // only for DEBUG - see what went wrong
       case e:Throwable => e.printStackTrace(); throw e
     } finally {
@@ -44,7 +44,7 @@ object SparklingDemo {
     }
   }
 
-  def prostateDemo(frameExtractor:RDDFrameExtractor = DummyFrameExtractor):Unit = {
+  def prostateDemo(frameExtractor:RDDFrameExtractor = DummyFrameExtractor, local:Boolean = true):Unit = {
     // Specifies how data are extracted from RDD into Frame
     val fextract  = frameExtractor
 
@@ -57,15 +57,15 @@ object SparklingDemo {
     val query = "SELECT * FROM prostate_table WHERE capsule=1"
 
     // Connect to shark cluster and make a query over prostate, transfer data into H2O
-    val frame:Frame = executeSpark[Prostate](dataset, rowParser, fextract, tableName, query)
+    val frame:Frame = executeSpark[Prostate](dataset, rowParser, fextract, tableName, query, local=local)
 
     println("Extracted frame from Spark:")
     println(if (frame!=null) frame.toStringAll else "<nothing>")
 
   }
 
-  def executeSpark[S <: Product : ClassTag : TypeTag](dataset: String, rowParser: Parser[S], frameExtractor: RDDFrameExtractor, tableName:String, query:String):Frame = {
-    val sc = createSparkContext()
+  def executeSpark[S <: Product : ClassTag : TypeTag](dataset: String, rowParser: Parser[S], frameExtractor: RDDFrameExtractor, tableName:String, query:String, local:Boolean = true):Frame = {
+    val sc = createSparkContext(local)
     val data = sc.textFile(dataset,2).cache()
 
     // SQL query over RDD
@@ -79,17 +79,21 @@ object SparklingDemo {
 
     val result = sql(query)
     val f = frameExtractor[S](result)
-    sc.stop()
+    sc.stop() // Will cause ThreadDeathError in Spark since DiskBlockManager is calling Thread.stop(), but this context will be already gone
     f // return value
   }
 
-  private def createSparkContext(): SparkContext = {
+  private def createSparkContext(local:Boolean = true): SparkContext = {
+    val
     val conf = new SparkConf()
-      .setMaster("local")
-      //.setMaster("spark://localhost:7077") // Use local
       .setAppName(APP_NAME)
-      //.setJars(SparkContext.jarOfClass(classOf[SparklingDemo]) ++ Seq("h2o.jar"))
       .set("spark.executor.memory", "1g")
+    if (local)
+      conf.setMaster("local")
+    else conf.setMaster("spark://localhost:7077") // Run 'sbt assembly to produce target/scala-2.10/h2o-sparkling-demo-assembly-1.0.jar
+      .setJars(Seq("target/scala-2.10/h2o-sparkling-demo-assembly-1.0.jar"))
+
+    println("Creating " + (if (local) "LOCAL" else "REMOTE ("+) )
     new SparkContext(conf)
   }
 
