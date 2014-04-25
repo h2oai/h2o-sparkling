@@ -1,7 +1,7 @@
 package water.sparkling.demo
 
-import water.{Futures, H2O, Boot}
-import org.apache.spark.{SparkContext, SparkConf}
+import water.{DRemoteTask, Futures, H2O, Boot}
+import org.apache.spark.{SparkContext, Partition, SparkConf}
 import org.apache.spark.sql.SQLContext
 import water.fvec.{NewChunk, AppendableVec, Vec, Frame}
 import org.apache.spark.rdd.RDD
@@ -14,23 +14,29 @@ import scala.Product
 import scala.reflect.ClassTag
 
 /**
- * Demo
+ * This demo shows how to access data stored in Spark and transfer them
+ * into H2O cloud.
  */
 object SparklingDemo {
 
+  /** Name of application */
   def APP_NAME = "Sparkling Demo"
 
+  /** Main launch H2O bootloader and then switch to H2O classloader, and redirects the execution
+    * to given class.
+    */
   def main(args: Array[String]):Unit = {
     Boot.main(classOf[SparklingDemo], args)
   }
 
   def userMain(args: Array[String]):Unit = {
     // Now we are in H2O classloader, hurray!
-    // So serve a glass of water
+    // So serve a glass of water from Spark RDD
     H2O.main(args)
     try {
-      prostateDemo()
-    } catch { // only for DEBUG
+      // Execute a simple demo
+      prostateDemo(/*frameExtractor = DistributedFrameExtractor*/)
+    } catch { // only for DEBUG - see what went wrong
       case e:Throwable => e.printStackTrace(); throw e
     } finally {
       // Always shutdown H2O worker
@@ -54,17 +60,12 @@ object SparklingDemo {
     val frame:Frame = executeSpark[Prostate](dataset, rowParser, fextract, tableName, query)
 
     println("Extracted frame from Spark:")
-    println(frame.toStringAll)
+    println(if (frame!=null) frame.toStringAll else "<nothing>")
 
   }
 
   def executeSpark[S <: Product : ClassTag : TypeTag](dataset: String, rowParser: Parser[S], frameExtractor: RDDFrameExtractor, tableName:String, query:String):Frame = {
-
-    val conf = new SparkConf()
-      .setMaster("local")
-      .setAppName(APP_NAME)
-      .set("spark.executor.memory", "1g")
-    val sc = new SparkContext(conf)
+    val sc = createSparkContext()
     val data = sc.textFile(dataset,2).cache()
 
     // SQL query over RDD
@@ -80,6 +81,16 @@ object SparklingDemo {
     val f = frameExtractor[S](result)
     sc.stop()
     f // return value
+  }
+
+  private def createSparkContext(): SparkContext = {
+    val conf = new SparkConf()
+      .setMaster("local")
+      //.setMaster("spark://localhost:7077") // Use local
+      .setAppName(APP_NAME)
+      //.setJars(SparkContext.jarOfClass(classOf[SparklingDemo]) ++ Seq("h2o.jar"))
+      .set("spark.executor.memory", "1g")
+    new SparkContext(conf)
   }
 
   /**
@@ -116,6 +127,32 @@ object SparklingDemo {
       val vecs = avecs.map(av => av.close(fs))
       // Return a new frame
       new Frame(names.toArray, vecs)
+    }
+  }
+
+  /** A frame extractor which goes around H2O cloud and force
+    * each node to load data from a specified part of RDD.
+    */
+  object DistributedFrameExtractor extends RDDFrameExtractor {
+    def apply[S <: Product : TypeTag](v: RDD[org.apache.spark.sql.Row]): Frame = {
+
+      new PartitionExtractor().invokeOnAllNodes()
+      null
+    }
+
+    /**
+     */
+    class PartitionExtractor extends DRemoteTask[PartitionExtractor] {
+      def lcompute():Unit = {
+        // Connect to Spark cloud
+        val sc = createSparkContext()
+        //sc.get
+        // Get create RDD and query for its partition data assigned for this node
+
+        tryComplete()
+      }
+      private def isMyPartition(p: Partition):Boolean = (p.index % H2O.CLOUD.size() == H2O.SELF.index())
+      def reduce(drt: PartitionExtractor):Unit = {}
     }
   }
 

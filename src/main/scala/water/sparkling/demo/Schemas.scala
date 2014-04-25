@@ -43,3 +43,4 @@ case class Airlines(year:Int,
                     isArrDelayed: Boolean,
                     isDepDelayed:Boolean)
 
+
