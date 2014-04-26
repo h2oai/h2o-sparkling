@@ -22,6 +22,8 @@ libraryDependencies += "org.apache.spark" %% "spark-core" % "1.0.0-SNAPSHOT"  % 
 
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "1.0.0-SNAPSHOT"  % "provided"  // Spark-SQL
 
+libraryDependencies += "org.tachyonproject" % "tachyon" % "0.4.1" % "provided" // To support inhale of data from Tachyon
+
 // Put back compile time "provided" dependencies
 run in Compile <<= Defaults.runTask(fullClasspath in Compile, mainClass in (Compile, run), runner in (Compile, run))
 
