@@ -6,6 +6,10 @@ scalaVersion := "2.10.3"
 
 organization := "0xdata.com"
 
+/** Add local .m2 cache */
+//resolvers += "Local Maven Repository" at Path.userHome.asFile.toURI.toURL + ".m2/repository" // Resolver.mavenLocal
+resolvers += Resolver.mavenLocal
+
 /* Add sonatype repo to get H2O */
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
@@ -16,7 +20,7 @@ resolvers += "Akka Repository" at "http://repo.akka.io/releases/"
 resolvers += "Cloudera Repository" at "https://repository.cloudera.com/artifactory/cloudera-repos"
 
 /* Dependencies - %% appends Scala version to artifactId */
-libraryDependencies += "ai.h2o" % "h2o-core" % "2.5-SNAPSHOT"
+libraryDependencies += "ai.h2o" % "h2o-core" % "2.5-SNAPSHOT" changing()
 
 libraryDependencies += "org.apache.spark" %% "spark-core" % "1.0.0-SNAPSHOT"  % "provided" // Spark-CORE: do not forget %% to select spark-core distribution reflecting Scala version
 
