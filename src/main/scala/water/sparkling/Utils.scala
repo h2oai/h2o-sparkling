@@ -11,7 +11,8 @@ object Utils {
     if (f.exists()) rm(f)
     f
   }
-  def partFile(f:File): File = new File(f, "part-00000") // FIXME: find definition of this part file name
+  def partFile(f:File, cnt:Int=1): Array[File] = Array.tabulate(cnt)(idx => new File(f, "part-0000"+idx))
+
   /** Recursive delete */
   def rm(file: File) {
     if(file == null) {
