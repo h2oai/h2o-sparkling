@@ -29,7 +29,7 @@ For this run no Spark cloud is required:
   - Execute an instance of H2O embedding Spark driver
   ```
   cd h2o-sparkling-demo
-  sbt run
+  sbt "run --local"
   ```
 
 ### Run distributed version
@@ -45,13 +45,24 @@ For this run a Spark cloud is required:
   ```
   cd h2o-sparkling-demo
   sbt assembly
-  sbt run
+  sbt "run --remote"
   ```
 
-## Doc
+### Run additional H2O node
+```
+cd h2o-sparkling-demo
+sbt runH2O
+```
 
-  - Matei Zaharia' slides about Spark
-    - http://ampcamp.berkeley.edu/wp-content/uploads/2012/06/matei-zaharia-part-2-amp-camp-2012-standalone-programs.pdf
+ ### Select different RDD2Frame extractor
+
+ Currently demo supports three extractors:
+
+   - _dummy_ - pull all data into driver and create a frame
+   - _file_ - ask Spark to save RDD as a file on local filesystem and then parse a stored file
+   - _tachyon_ - ask Spark to save RDD to tachyon filesystem, then H2O load a file from tachyon FS
+
+  The extractor can be selected via `--extractor` command line parameter, e.g., `--extractor==tachyon`
 
 
 ## Running with Tachyon
@@ -61,8 +72,22 @@ For this run a Spark cloud is required:
   ./tachyon-start.sh
   ```
 
-  - Look at http://localhost:19999/ to see list of files stored on the storage
+  - Look at http://localhost:19999/ to see list of files stored on the storage or type _tfs_ command `tachyon tfs ls /`
 
   - For more info details discuss instructions instructions on http://tachyon-project.org/Running-Spark-on-Tachyon.html
 
+
+## Example
+
+ Run a demo with Tachyon-based extractor againts remote Spark cloud:
+ ```
+ cd h2o-sparkling-demo
+ sbt assembly
+ sbt "run --remote --extractor=tachyon"
+ ```
+
+## Doc
+
+  - Matei Zaharia' slides about Spark
+    - http://ampcamp.berkeley.edu/wp-content/uploads/2012/06/matei-zaharia-part-2-amp-camp-2012-standalone-programs.pdf
 

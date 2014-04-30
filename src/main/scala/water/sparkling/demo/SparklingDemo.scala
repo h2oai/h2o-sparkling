@@ -31,17 +31,21 @@ object SparklingDemo {
     // Now we are in H2O classloader, hurray!
     // So serve a glass of water from Spark RDD
     H2O.main(args)
+    val conf = extractConf(args)
+    Log.info("Running demo with following configuration: " + conf)
     try {
       // Execute a simple demo
-      prostateDemo(frameExtractor = TachyonFrameExtractor, local=true)
+      prostateDemo(conf)
     } catch { // only for DEBUG - see what went wrong
       case e:Throwable => e.printStackTrace(); throw e
     } finally {
       // Always shutdown H2O worker
       //Thread.sleep(3600)
-      H2O.CLOUD.shutdown()
+      if (conf.shutdown) H2O.CLOUD.shutdown()
     }
   }
+
+  def prostateDemo(conf:DemoConf): Unit = prostateDemo(frameExtractor=conf.extractor, local=conf.local)
 
   def prostateDemo(frameExtractor:RDDFrameExtractor = DummyFrameExtractor, local:Boolean = true):Unit = {
     // Specifies how data are extracted from RDD into Frame
@@ -60,7 +64,6 @@ object SparklingDemo {
 
     println("Extracted frame from Spark:")
     println(if (frame!=null) frame.toStringAll else "<nothing>")
-
   }
 
   def executeSpark[S <: Product : ClassTag : TypeTag](dataset: String, rowParser: Parser[S], frameExtractor: RDDFrameExtractor, tableName:String, query:String, local:Boolean = true):Frame = {
@@ -95,7 +98,27 @@ object SparklingDemo {
     Log.info("Creating " + (if (local) "LOCAL" else "REMOTE ("+master+")") + " Spark context." )
     new SparkContext(conf)
   }
+
+  def extractConf(args: Array[String]): DemoConf = {
+    var local:Boolean = true
+    var extractor:RDDFrameExtractor = FileBasedFrameExtractor
+    var shutdown:Boolean = true
+    args.foreach(param => {
+      param match {
+        case "--local"  => local = true
+        case "--remote" => local = false
+        case "--extractor=dummy" => extractor = DummyFrameExtractor
+        case "--extractor=file"  => extractor = FileBasedFrameExtractor
+        case "--extractor=tachyon" => extractor = TachyonFrameExtractor
+        case "--shutdown" => shutdown = true
+        case "--noshutdown" => shutdown = false
+      }
+    })
+    DemoConf(local, extractor, shutdown)
+  }
 }
 
 class SparklingDemo {
 }
+
+case class DemoConf(local:Boolean = true, extractor: RDDFrameExtractor = FileBasedFrameExtractor, shutdown:Boolean = true)
