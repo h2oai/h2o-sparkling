@@ -6,13 +6,13 @@ Demo showing how to access Spark from H2O and transfer data between both platfor
 ## Installation
 
   - First compile latest version of spark with SQL component
-
-```
-git clone spark
-cd spark
-sbt/sbt assembly publish-local
-```
-    - For Tachyon support please `XXX`
+  ```
+  git clone spark
+  cd spark
+  sbt/sbt assembly publish-local
+  ```
+    
+  - For Tachyon support please `XXX`
   
   - Compile sparkling demo
 ```
