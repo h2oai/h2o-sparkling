@@ -26,7 +26,6 @@ Note: The assembly stage is important, since the demo is a Spark driver sending 
 
 ### Run local version
 For this run no Spark cloud is required:
-
   - Execute an instance of H2O embedding Spark driver
   ```
   cd h2o-sparkling-demo
