@@ -13,7 +13,6 @@ Demo showing how to access Spark from H2O and transfer data between both platfor
   ```
     
   - For Tachyon support please download Tachyon 0.4.1 from https://github.com/amplab/tachyon/releases/tag/v0.4.1
-  - [Tachyon project web page|https://github.com/amplab/tachyon/releases/tag/v0.4.1]
   
   - Compile sparkling demo
   ```
@@ -36,18 +35,19 @@ For this run no Spark cloud is required.
 
 ### Run distributed version
 For this run a Spark cloud is required:
- - run master and one worker on local node
+  - run master and one worker on local node
   ```
   cd spark/sbin
   ./start-master.sh
   ./start-slave.sh 1 "spark://localhost:7077"
   ```
- - assembly h2o-sparkling-demo jar file which can be sent by the driver to Spark cloud
- ```
- cd h2o-sparkling-demo
- sbt assembly
- sbt run
- ```
+
+  - assembly h2o-sparkling-demo jar file which can be sent by the driver to Spark cloud
+  ```
+  cd h2o-sparkling-demo
+  sbt assembly
+  sbt run
+  ```
 
 ## Doc
 
