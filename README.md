@@ -34,14 +34,14 @@ For this run no Spark cloud is required:
 
 ### Run distributed version
 For this run a Spark cloud is required:
-  - run master and one worker on local node
+  - Run master and one worker on local node
   ```
   cd spark/sbin
   ./start-master.sh
   ./start-slave.sh 1 "spark://localhost:7077"
   ```
 
-  - assembly h2o-sparkling-demo jar file which can be sent by the driver to Spark cloud
+  - Assembly h2o-sparkling-demo jar file which can be sent by the driver to Spark cloud
   ```
   cd h2o-sparkling-demo
   sbt assembly
@@ -50,15 +50,17 @@ For this run a Spark cloud is required:
 
 ## Doc
 
- - http://ampcamp.berkeley.edu/wp-content/uploads/2012/06/matei-zaharia-part-2-amp-camp-2012-standalone-programs.pdf
+  - Matei Zaharia' slides about Spark
+    - http://ampcamp.berkeley.edu/wp-content/uploads/2012/06/matei-zaharia-part-2-amp-camp-2012-standalone-programs.pdf
 
 
 ## Running with Tachyon
-  - start Tachyon
+  - Start Tachyon
   ```
   cd tachyon/bin
   ./tachyon-start.sh
   ```
- - For more info please discuss instructions instructions on http://tachyon-project.org/Running-Spark-on-Tachyon.html
+ 
+  - For more info please discuss instructions instructions on http://tachyon-project.org/Running-Spark-on-Tachyon.html
 
 
