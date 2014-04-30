@@ -9,7 +9,7 @@ import scala.reflect.runtime.universe.TypeTag
 import scala.Product
 import scala.reflect.ClassTag
 import water.util.Log
-import water.sparkling.{FileBasedFrameExtractor, DummyFrameExtractor}
+import water.sparkling.{TachyonFrameExtractor, FileBasedFrameExtractor, DummyFrameExtractor}
 
 /**
  * This demo shows how to access data stored in Spark and transfer them
@@ -33,11 +33,12 @@ object SparklingDemo {
     H2O.main(args)
     try {
       // Execute a simple demo
-      prostateDemo(frameExtractor = FileBasedFrameExtractor, local=true)
+      prostateDemo(frameExtractor = TachyonFrameExtractor, local=true)
     } catch { // only for DEBUG - see what went wrong
       case e:Throwable => e.printStackTrace(); throw e
     } finally {
       // Always shutdown H2O worker
+      //Thread.sleep(3600)
       H2O.CLOUD.shutdown()
     }
   }
