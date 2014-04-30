@@ -60,7 +60,9 @@ For this run a Spark cloud is required:
   cd tachyon/bin
   ./tachyon-start.sh
   ```
- 
-  - For more info please discuss instructions instructions on http://tachyon-project.org/Running-Spark-on-Tachyon.html
+
+  - Look at http://localhost:19999/ to see list of files stored on the storage
+
+  - For more info details discuss instructions instructions on http://tachyon-project.org/Running-Spark-on-Tachyon.html
 
 
