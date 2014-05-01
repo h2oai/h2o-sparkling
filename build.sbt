@@ -38,7 +38,7 @@ connectInput in run := true
 
 outputStrategy in run := Some(StdoutOutput)
 
-javaOptions in run ++= Seq("-Xmx4g", "-Xms4g")
+javaOptions in run ++= Seq("-Xmx4g", "-Xms4g", "-Djava.security.krb5.realm=", "-Djava.security.krb5.kdc=", "-Djava.security.krb5.conf=/dev/null")
 
 // For debugging from Eclipse
 //javaOptions in run += "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=1044"
