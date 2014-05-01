@@ -62,8 +62,8 @@ object SparklingDemo {
     // Connect to shark cluster and make a query over prostate, transfer data into H2O
     val frame:Frame = executeSpark[Prostate](dataset, rowParser, fextract, tableName, query, local=local)
 
-    println("Extracted frame from Spark:")
-    println(if (frame!=null) frame.toStringAll else "<nothing>")
+    Log.info("Extracted frame from Spark:")
+    Log.info(if (frame!=null) frame.toString + "\nRows: " + frame.numRows() else "<nothing>")
   }
 
   def executeSpark[S <: Product : ClassTag : TypeTag](dataset: String, rowParser: Parser[S], frameExtractor: RDDFrameExtractor, tableName:String, query:String, local:Boolean = true):Frame = {
@@ -79,6 +79,7 @@ object SparklingDemo {
     table.registerAsTable(tableName)
 
     val result = sql(query)
+    Log.info("RDD result has: " + result.count() + " rows")
     val f = frameExtractor[S](result)
     sc.stop() // Will cause ThreadDeathError in Spark since DiskBlockManager is calling Thread.stop(), but this client will be already gone
     f // return value
