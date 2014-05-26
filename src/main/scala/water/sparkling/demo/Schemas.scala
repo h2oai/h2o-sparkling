@@ -1,6 +1,6 @@
 package water.sparkling.demo
 
-import SchemaUtils.{int,float}
+import SchemaUtils.{int,float,bool,str}
 
 case class Prostate(id:Int, capsule:Int, age:Int, race: Int, dpros: Int, dcaps: Int, psa:Float, vol:Float, gleason:Int)
 
@@ -10,37 +10,56 @@ object ProstateParse extends Parser[Prostate] {
   }
 }
 
-// Hihi: Implementation restriction: case classes cannot have more than 22 parameters.
-case class Airlines(year:Int,
-                    month:Int,
-                    dayOfMonth:Int,
-                    dayOfWeek:Int,
-                    //depTime:Int,
-                    crsDepTime:Int,
-                    //arrTime:Int,
-                    crsArrTime:Int,
-                    uniqueCarrier:String,
-                    flightNum:Int,
-                    tailNum:Int,
-                    //actualElapsedTime:Int,
-                    crsElapsedTime:Int,
-                    //airTime:Int,
-                    //arrDelay:Int,
-                    //depDelay:Int,
-                    origin:String,
-                    dest:String,
-                    distance:Int,
-                    //taxiIn:Int,
-                    //taxiOut:Int,
-                    //cancelled:Boolean,
-                    //cancellationCode:String,
-                    //diverted:Boolean,
-                    //carrierDelay:Int,
-                    //weatherDelay:Int,
-                    //nasDelay:Int,
-                    //securityDelay:Int,
-                    //lateAircraftDelay:Int,
-                    isArrDelayed: Boolean,
-                    isDepDelayed:Boolean)
+class Airlines( year:Int,           // 0
+                month:Int,          // 1
+                dayOfMonth:Int,     // 2
+                dayOfWeek:Int,      // 3
+                crsDepTime:Int,     // 5
+                crsArrTime:Int,     // 7
+                uniqueCarrier:String,// 8
+                flightNum:Int,      // 9
+                tailNum:Int,        // 10
+                crsElapsedTime:Int, // 12
+                origin:String,      // 16
+                dest:String,        // 17
+                distance:Int,       // 18
+                isArrDelayed: Boolean, // 29
+                isDepDelayed:Boolean // 30
+                ) extends Product {
+
+  @throws(classOf[IndexOutOfBoundsException])
+  override def productElement(n: Int) = n match {
+      case 0 => year
+      case 1 => month
+      case 2 => dayOfMonth
+      case 3 => dayOfWeek
+      case 4 => crsDepTime
+      case 5 => crsArrTime
+      case 6 => uniqueCarrier
+      case 7 => flightNum
+      case 8 => tailNum
+      case 9 => crsElapsedTime
+      case 10 => origin
+      case 11 => dest
+      case 12 => distance
+      case 13 => isArrDelayed
+      case 14 => isDepDelayed
+      case _ => throw new IndexOutOfBoundsException(n.toString())
+  }
+
+  override def productArity: Int = 15
+
+  override def canEqual(that: Any): Boolean = that.isInstanceOf[Airlines]
+}
+
+object AirlinesParser extends Parser[Airlines] {
+  override def apply(r: Array[String]) =
+    new Airlines(
+      int(r(0)), int(r(1)), int(r(2)), int(r(3)),
+      int(r(5)), int(r(7)), str(r(8)), int(r(9)),
+      int(r(10)), int(r(12)), str(r(16)), str(r(17)),
+      int(r(18)), bool(r(29)), bool(r(30))
+    )
+}
 
 
