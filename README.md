@@ -3,6 +3,11 @@ h2o-sparkling-demo
 
 Demo showing how to access Spark from H2O and transfer data between both platforms.
 
+## Requirements
+  - Spark 1.0.0 (SQL component required)
+  - Tachyon 0.4.1
+  - Java 1.6+
+
 ## Installation
 
   - First compile latest version of spark with SQL component
@@ -20,7 +25,7 @@ Demo showing how to access Spark from H2O and transfer data between both platfor
   sbt assembly
   ```
 
-Note: The assembly stage is important, since the demo is a Spark driver sending a jar-file containing implementation of a working job.
+> Note: The assembly stage is important, since the demo is a Spark driver sending a jar-file containing implementation of a working job.
 
 ## Run demo
 
