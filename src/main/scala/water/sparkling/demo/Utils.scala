@@ -1,30 +1,36 @@
 package water.sparkling.demo
 
 object SchemaUtils {
-  def int(s:String):Int      = if (s!=null && !s.isEmpty) parseInt(s) else na[Int]
-  def float(s:String):Float  = if (s!=null && !s.isEmpty) parseFloat(s) else na[Float]
-  def str(s:String):String   = if (s!=null && !s.isEmpty) s else na[String]
-  def bool(s:String):Boolean = if (s!=null && !s.isEmpty) parseBool(s) else na[Boolean]
 
-  def parseInt(s:String):Int = {
-    val r = try { s.trim().toInt } catch {
-      case e:NumberFormatException => na[Int]
+  def int  (s:String):Option[Int]     = if (isValid(s)) parseInt(s)   else None
+  def float(s:String):Option[Float]   = if (isValid(s)) parseFloat(s) else None
+  def str  (s:String):Option[String]  = if (isValid(s)) Option(s)     else None
+  def bool (s:String):Option[Boolean] = if (isValid(s)) parseBool(s)  else None
+
+  def parseInt(s:String):Option[Int] =
+    try { Option(s.trim().toInt) } catch {
+      case e:NumberFormatException => None
     }
-    r
-  }
-  def parseFloat(s:String):Float = {
-    val r = try { s.trim().toFloat } catch {
-      case e:NumberFormatException => na[Float]
+
+  def parseFloat(s:String):Option[Float] =
+    try { Option(s.trim().toFloat) } catch {
+      case e:NumberFormatException => None
     }
-    r
-  }
-  def parseBool(s:String):Boolean = s.trim().toLowerCase match {
-    case "true" => true
-    case "yes" => true
-    case "false" => false
-    case "no" => false
-    case _ => na[Boolean]
+
+  def parseBool(s:String):Option[Boolean] = s.trim().toLowerCase match {
+    case "true"|"yes" => Option(true)
+    case "false"|"no" => Option(false)
+    case _ => None
   }
 
-  def na[S]:S = null.asInstanceOf[S]
+  def isNA(s:String) = s==null || s.isEmpty || (s.trim.toLowerCase match {
+    case "na" => true
+    case "n/a"=> true
+    case _ => false
+  })
+
+  def isValid(s:String) = !isNA(s)
+
+  //def na[S]:S = null.asInstanceOf[S]
+  //def na[S]:Option[S] = None
 }

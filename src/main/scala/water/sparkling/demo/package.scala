@@ -9,6 +9,8 @@ package object demo {
   // Function to extract Frame from RDD
   trait GenericFrameExtractor[-F, +T] {
     def apply[S <: Product : TypeTag](v:F):T
+    def name:String
+    override def toString: String = "RDDExtractor@"+name
   }
   type RDDFrameExtractor = GenericFrameExtractor[RDD[org.apache.spark.sql.Row], Frame]
 

@@ -7,31 +7,45 @@ import org.apache.spark.sql.SQLContext
 import org.apache.spark.rdd.RDD
 import water.util.Log
 import org.apache.spark.{SparkConf, SparkContext}
+import java.util
 
 trait Demo {
   def name:String
   def run(conf: DemoConf)
 
-  def executeSpark[S <: Product : ClassTag : TypeTag](dataset: String, rowParser: Parser[S], frameExtractor: RDDFrameExtractor, tableName: String, query: String, local: Boolean = true): Frame = {
+  def executeSpark[S <: Product : ClassTag : TypeTag](dataset: String, rowParser: Parser[S], frameExtractor: RDDFrameExtractor, tableName: String, query: String, local: Boolean = true, hasHeader: Boolean = true): Frame = {
     Log.info("Table: " + tableName)
     Log.info("Query: " + query)
     Log.info("Spark: " + (if (local) "LOCAL" else "REMOTE"))
 
     val sc = createSparkContext(local)
-    val data = sc.textFile(dataset, 2).cache()
+    val data = sc.textFile(dataset, 2) //.cache()
 
     // SQL query over RDD
     val sqlContext = new SQLContext(sc)
     // make visible all members of sqlContext object
     import sqlContext._
     // Dummy parsing so far :-/
-    val table: RDD[S] = data.map(_.split(",")).map(row => rowParser(row))
+    val table: RDD[S] = data.mapPartitionsWithIndex(
+                            (partIdx:Int,lines:Iterator[String]) => { if (partIdx==0 && hasHeader) lines.drop(1) else lines })
+                            .map(_.split(","))
+                            .map(row => rowParser(row))
     table.registerAsTable(tableName)
 
     val result = sql(query)
     Log.info("RDD result has: " + result.count() + " rows")
     val f = frameExtractor[S](result)
     sc.stop() // Will cause ThreadDeathError in Spark since DiskBlockManager is calling Thread.stop(), but this client will be already gone
+    // Setup headers based on Schema
+    if (hasHeader) {
+      f.write_lock(null)
+      try {
+        val tt = implicitly[ClassTag[S]]
+        val names = tt.runtimeClass.getDeclaredFields().map(_.getName)
+        f._names = names
+        f.update(null)
+      } finally f.unlock(null)
+    }
     f // return value
   }
 

@@ -68,4 +68,6 @@ object DummyFrameExtractor extends RDDFrameExtractor {
       }
     })
   }
+
+  override def name: String = "dummy"
 }

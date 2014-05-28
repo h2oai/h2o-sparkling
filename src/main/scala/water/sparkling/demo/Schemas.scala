@@ -1,8 +1,17 @@
 package water.sparkling.demo
 
 import SchemaUtils.{int,float,bool,str}
+import java.util
 
-case class Prostate(id:Int, capsule:Int, age:Int, race: Int, dpros: Int, dcaps: Int, psa:Float, vol:Float, gleason:Int)
+case class Prostate(id      :Option[Int],
+                    capsule :Option[Int],
+                    age     :Option[Int],
+                    race    :Option[Int],
+                    dpros   :Option[Int],
+                    dcaps   :Option[Int],
+                    psa     :Option[Float],
+                    vol     :Option[Float],
+                    gleason :Option[Int])
 
 object ProstateParse extends Parser[Prostate] {
   def apply(row: Array[String]): Prostate = {
@@ -10,21 +19,21 @@ object ProstateParse extends Parser[Prostate] {
   }
 }
 
-class Airlines( year:Int,           // 0
-                month:Int,          // 1
-                dayOfMonth:Int,     // 2
-                dayOfWeek:Int,      // 3
-                crsDepTime:Int,     // 5
-                crsArrTime:Int,     // 7
-                uniqueCarrier:String,// 8
-                flightNum:Int,      // 9
-                tailNum:Int,        // 10
-                crsElapsedTime:Int, // 12
-                origin:String,      // 16
-                dest:String,        // 17
-                distance:Int,       // 18
-                isArrDelayed: Boolean, // 29
-                isDepDelayed:Boolean // 30
+class Airlines( year          :Option[Int],    // 0
+                month         :Option[Int],    // 1
+                dayOfMonth    :Option[Int],    // 2
+                dayOfWeek     :Option[Int],    // 3
+                crsDepTime    :Option[Int],    // 5
+                crsArrTime    :Option[Int],    // 7
+                uniqueCarrier :Option[String], // 8
+                flightNum     :Option[Int],    // 9
+                tailNum       :Option[Int],    // 10
+                crsElapsedTime:Option[Int],    // 12
+                origin        :Option[String], // 16
+                dest          :Option[String], // 17
+                distance      :Option[Int],    // 18
+                isArrDelayed  :Option[Boolean],// 29
+                isDepDelayed  :Option[Boolean] // 30
                 ) extends Product {
 
   @throws(classOf[IndexOutOfBoundsException])
@@ -53,13 +62,15 @@ class Airlines( year:Int,           // 0
 }
 
 object AirlinesParser extends Parser[Airlines] {
-  override def apply(r: Array[String]) =
-    new Airlines(
+  override def apply(r: Array[String]) = {
+    val v = new Airlines(
       int(r(0)), int(r(1)), int(r(2)), int(r(3)),
       int(r(5)), int(r(7)), str(r(8)), int(r(9)),
       int(r(10)), int(r(12)), str(r(16)), str(r(17)),
       int(r(18)), bool(r(29)), bool(r(30))
     )
+    v
+  }
 }
 
 

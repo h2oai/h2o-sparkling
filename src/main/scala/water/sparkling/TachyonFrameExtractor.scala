@@ -10,7 +10,7 @@ import tachyon.client.TachyonFS
 import water.Futures
 
 /**
- *
+ * Extractor of data via Tachyon.
  */
 object TachyonFrameExtractor extends RDDFrameExtractor {
   def defaultTachyonServer = "localhost:19998"
@@ -23,7 +23,7 @@ object TachyonFrameExtractor extends RDDFrameExtractor {
     // - connect to Tachyon and get clientinfo of file which we want to save
     val tachyonCLI = TachyonFS.get(defaultTachyonURI)
     tachyonCLI.delete(fileName, true)
-    rdd.map(_.mkString(",")).saveAsTextFile(fileURI)
+    rdd.saveAsH2OFrameFile(fileURI)
     val partCnt = rdd.partitions.length
     // We need to know size of files
     // All the files for all partitions
@@ -36,4 +36,6 @@ object TachyonFrameExtractor extends RDDFrameExtractor {
     // - parse files referenced by keys pointing into Tachyon
     FrameUtils.parseFrame(rddKey(rdd), keys:_* )
   }
+
+  override def name: String = "tachyon"
 }

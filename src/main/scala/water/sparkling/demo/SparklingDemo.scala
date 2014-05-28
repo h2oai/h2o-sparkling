@@ -53,7 +53,7 @@ object SparklingDemo {
     var extractor:RDDFrameExtractor = FileBasedFrameExtractor
     var shutdown:Boolean = true
     var demoName = "prostate"
-    val demoRegexp = """--demo=([a-zA-Z])""".r
+    val demoRegexp = """--demo=([a-zA-Z]*)""".r
     args.foreach(param => {
       param match {
         case "--local"  => local = true
@@ -67,6 +67,7 @@ object SparklingDemo {
       }
     })
     println(demoName)
+    // return config
     DemoConf(demoName, local, extractor, shutdown)
   }
 }
