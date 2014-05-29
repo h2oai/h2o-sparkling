@@ -1,7 +1,7 @@
-h2o-sparkling-demo
-==================
+h2o-sparkling
+=============
 
-Demo showing how to access Spark from H2O and transfer data between both platforms.
+Makes interoperability between H2O and Spark trivial.
 
 ## Requirements
   - Spark 1.0.0 (SQL component required)
