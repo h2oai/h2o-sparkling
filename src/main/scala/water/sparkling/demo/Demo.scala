@@ -14,24 +14,25 @@ trait Demo {
   def run(conf: DemoConf)
 
   def executeSpark[S <: Product : ClassTag : TypeTag](dataset: String, rowParser: Parser[S], frameExtractor: RDDFrameExtractor, tableName: String, query: String, local: Boolean = true, hasHeader: Boolean = true): Frame = {
+    Log.info("Data : " + dataset)
     Log.info("Table: " + tableName)
     Log.info("Query: " + query)
     Log.info("Spark: " + (if (local) "LOCAL" else "REMOTE"))
 
     val sc = createSparkContext(local)
-    val data = sc.textFile(dataset, 2) //.cache()
+    val data = sc.textFile(dataset,2).cache()
 
     // SQL query over RDD
     val sqlContext = new SQLContext(sc)
     // make visible all members of sqlContext object
     import sqlContext._
-    // Dummy parsing so far :-/
-    val table: RDD[S] = data.mapPartitionsWithIndex(
-                            (partIdx:Int,lines:Iterator[String]) => { if (partIdx==0 && hasHeader) lines.drop(1) else lines })
-                            .map(_.split(","))
-                            .map(row => rowParser(row))
+    // Dummy parsing
+    val table: RDD[S] = data
+                          //FIXME: skip header .mapPartitionsWithIndex((partIdx:Int,lines:Iterator[String]) => { if (partIdx==0 && hasHeader && lines.length>0) lines.drop(1) else lines })
+                          .map(_.split(","))
+                          .map(row => rowParser(row))
     table.registerAsTable(tableName)
-
+    // Make a query over the table
     val result = sql(query)
     Log.info("RDD result has: " + result.count() + " rows")
     val f = frameExtractor[S](result)

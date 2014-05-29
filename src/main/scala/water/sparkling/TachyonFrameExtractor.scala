@@ -34,7 +34,7 @@ object TachyonFrameExtractor extends RDDFrameExtractor {
     val keys = files.map(f => TachyonFileVec.make(defaultTachyonServer, f, fs))
     fs.blockForPending() // Wait till all puts are done
     // - parse files referenced by keys pointing into Tachyon
-    FrameUtils.parseFrame(rddKey(rdd), keys:_* )
+    FrameUtils.parseFrame(rddKey(rdd, "data"), keys:_* )
   }
 
   override def name: String = "tachyon"

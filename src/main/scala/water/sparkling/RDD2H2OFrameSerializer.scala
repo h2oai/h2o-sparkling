@@ -7,9 +7,9 @@ import java.io.File
  * Allows for saving RDD as H2O frame.
  */
 class SQLRDD2H2OFrameSerializer(val rdd:RDD[org.apache.spark.sql.Row]) extends Serializable {
-  def saveAsH2OFrameFile(f:String):Unit = saveAsH2OFrameFile(new File(f))
-  def saveAsH2OFrameFile(f:File):Unit = {
-    rdd.map(rowToString(_)).saveAsTextFile(f.getAbsolutePath)
+  def saveAsH2OFrameFile(f:File):Unit = saveAsH2OFrameFile(f.getAbsolutePath)
+  def saveAsH2OFrameFile(path:String):Unit = {
+    rdd.map(rowToString(_)).saveAsTextFile(path)
   }
 
   def rowToString(row:org.apache.spark.sql.Row):String = {

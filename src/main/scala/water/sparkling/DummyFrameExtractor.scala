@@ -44,7 +44,7 @@ object DummyFrameExtractor extends RDDFrameExtractor {
     ncs.foreach(_.close(0, fs))
     val vecs = avecs.map(av => av.close(fs))
     // Return a new frame
-    val f = new Frame(rddKey(rdd), names.toArray, vecs)
+    val f = new Frame(rddKey(rdd, "data"), names.toArray, vecs)
     f.delete_and_lock(null).unlock(null)
     f
   }

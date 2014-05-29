@@ -4,8 +4,9 @@ import org.apache.spark.rdd.RDD
 import water.Key
 import java.io.File
 
+
 object Utils {
-  def rddKey(rdd: RDD[_]): Key = Key.make("rdd_"+rdd.name+"_"+rdd.id)
+  def rddKey(rdd: RDD[_], name: String): Key = Key.make("rdd_"+name+"_"+rdd.id)
   def tmpFile(rdd: RDD[_]): File = {
     val f = new File(new File(System.getProperty("java.io.tmpdir")), rddName(rdd) )
     if (f.exists()) rm(f)
@@ -29,5 +30,4 @@ object Utils {
       file.delete()
     }
   }
-
 }
