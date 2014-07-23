@@ -12,7 +12,7 @@ object ProstateDemo extends Demo {
     val fextract  = frameExtractor
 
     // Dataset to parse
-    val dataset   = "/Users/michal/Devel/projects/h2o/repos/NEW.h2o.github/smalldata/logreg/prostate.csv"
+    val dataset   = "data/prostate.csv"
     // Row parser
     val rowParser = ProstateParse
     val tableName = "prostate_table"
