@@ -6,6 +6,9 @@ scalaVersion := "2.10.3"
 
 organization := "0xdata.com"
 
+// Add dependcy graph
+net.virtualvoid.sbt.graph.Plugin.graphSettings
+
 /** Add local .m2 cache */
 //resolvers += Resolver.mavenLocal
 /* Add sonatype repo to get H2O */
@@ -18,7 +21,9 @@ resolvers += "Akka Repository" at "http://repo.akka.io/releases/"
 resolvers += "Cloudera Repository" at "https://repository.cloudera.com/artifactory/cloudera-repos"
 
 /* Dependencies - %% appends Scala version to artifactId */
-libraryDependencies += "ai.h2o" % "h2o-core" % "2.5-SNAPSHOT" changing()
+libraryDependencies += "ai.h2o" % "h2o-core" % "2.5-SNAPSHOT" changing() excludeAll( ExclusionRule("stax", "stax-api"), ExclusionRule("org.apache.xmlbeans","xmlbeans"))
+
+libraryDependencies += "ai.h2o" %% "h2o-scala" % "2.5-SNAPSHOT" changing()
 
 libraryDependencies += "org.apache.spark" %% "spark-core" % "1.0.2"  % "provided" // Spark-CORE: do not forget %% to select spark-core distribution reflecting Scala version
 
