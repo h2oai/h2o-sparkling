@@ -6,6 +6,7 @@ import java.io.File
 
 
 object Utils {
+  def rddKey(rdd: RDD[_]): Key = if (rdd.name ==null) rddKey(rdd, "data") else rddKey(rdd, rdd.name)
   def rddKey(rdd: RDD[_], name: String): Key = Key.make("rdd_"+name+"_"+rdd.id)
   def tmpFile(rdd: RDD[_]): File = {
     val f = new File(new File(System.getProperty("java.io.tmpdir")), rddName(rdd) )

@@ -1,6 +1,6 @@
 name := "h2o-sparkling-demo"
 
-version := "1.0"
+version := "1.0.0"
 
 scalaVersion := "2.10.3"
 
@@ -20,9 +20,9 @@ resolvers += "Cloudera Repository" at "https://repository.cloudera.com/artifacto
 /* Dependencies - %% appends Scala version to artifactId */
 libraryDependencies += "ai.h2o" % "h2o-core" % "2.5-SNAPSHOT" changing()
 
-libraryDependencies += "org.apache.spark" %% "spark-core" % "1.0.0"  % "provided" // Spark-CORE: do not forget %% to select spark-core distribution reflecting Scala version
+libraryDependencies += "org.apache.spark" %% "spark-core" % "1.0.2"  % "provided" // Spark-CORE: do not forget %% to select spark-core distribution reflecting Scala version
 
-libraryDependencies += "org.apache.spark" %% "spark-sql" % "1.0.0"  % "provided"  // Spark-SQL
+libraryDependencies += "org.apache.spark" %% "spark-sql" % "1.0.2"  % "provided"  // Spark-SQL
 
 libraryDependencies += "org.tachyonproject" % "tachyon" % "0.4.1-thrift" % "provided" // To support inhale of data from Tachyon
 

@@ -15,6 +15,7 @@ import water.Futures
 object TachyonFrameExtractor extends RDDFrameExtractor {
   def defaultTachyonServer = "localhost:19998"
   def defaultTachyonURI    = "tachyon://" + defaultTachyonServer
+
   def apply[S <: Product : TypeTag](rdd: RDD[org.apache.spark.sql.Row]): Frame = {
     import scala.collection.JavaConversions._ // for conversion from List to Scala seq
     // Persist the file to Tachyon
@@ -34,7 +35,7 @@ object TachyonFrameExtractor extends RDDFrameExtractor {
     val keys = files.map(f => TachyonFileVec.make(defaultTachyonServer, f, fs))
     fs.blockForPending() // Wait till all puts are done
     // - parse files referenced by keys pointing into Tachyon
-    FrameUtils.parseFrame(rddKey(rdd, "data"), keys:_* )
+    FrameUtils.parseFrame(rddKey(rdd), keys:_* )
   }
 
   override def name: String = "tachyon"

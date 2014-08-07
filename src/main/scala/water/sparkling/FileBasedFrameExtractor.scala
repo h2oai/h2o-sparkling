@@ -16,7 +16,7 @@ object FileBasedFrameExtractor extends RDDFrameExtractor {
     // into 1 <- FIXME
     val partCnt = rdd.partitions.length
     rdd.saveAsH2OFrameFile(f) // Merge all-partitions into one and save it as one file
-    FrameUtils.parseFrame(rddKey(rdd,"data"), partFile(f,partCnt):_* )
+    FrameUtils.parseFrame(rddKey(rdd), partFile(f,partCnt):_* )
   }
 
   override def name: String = "file"

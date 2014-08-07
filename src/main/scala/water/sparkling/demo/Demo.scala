@@ -28,13 +28,14 @@ trait Demo {
     import sqlContext._
     // Dummy parsing
     val table: RDD[S] = data
-                          //FIXME: skip header .mapPartitionsWithIndex((partIdx:Int,lines:Iterator[String]) => { if (partIdx==0 && hasHeader && lines.length>0) lines.drop(1) else lines })
+                          // FIXME: skip header .mapPartitionsWithIndex((partIdx:Int,lines:Iterator[String]) => { if (partIdx==0 && hasHeader && lines.length>0) lines.drop(1) else lines })
                           .map(_.split(","))
                           .map(row => rowParser(row))
     table.registerAsTable(tableName)
     // Make a query over the table
     val result = sql(query)
     Log.info("RDD result has: " + result.count() + " rows")
+    result.setName(tableName) // assign a name to resulting RDD
     val f = frameExtractor[S](result)
     sc.stop() // Will cause ThreadDeathError in Spark since DiskBlockManager is calling Thread.stop(), but this client will be already gone
     // Setup headers based on Schema
