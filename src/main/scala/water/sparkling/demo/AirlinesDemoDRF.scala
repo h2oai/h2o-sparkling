@@ -1,12 +1,10 @@
 package water.sparkling.demo
 
-import hex.gbm.GBM
-import water.api.dsl.H2ODsl._
+import hex.drf.DRF
 import water.fvec.Frame
 import water.util.Log
 
-
-object AirlinesDemo extends Demo {
+object AirlinesDemoDRF extends Demo {
 
   override def run(conf: DemoConf): Unit = {
     // Prepare data
@@ -24,13 +22,14 @@ object AirlinesDemo extends Demo {
     Log.info("Extracted frame from Spark: ")
     Log.info(if (frame!=null) frame.toString + "\nRows: " + frame.numRows() else "<nothing>")
 
-    // Now make a blocking call of GBM directly via Java API
-    val params = (p:GBM) => { import p._
-      ntrees = 100
+    // Inject H2O Scala API
+    import  water.api.dsl.H2ODsl._
+    val params = (p:DRF) => { import p._
+      ntrees = 10
       classification = true
       p
     }
-    val gbmModel = gbm(frame, null, 0 to 12, 14, params)
+    val drfModel = drf(frame, null, 0 to 12, 14, params)
     Log.info("Model built!")
   }
 

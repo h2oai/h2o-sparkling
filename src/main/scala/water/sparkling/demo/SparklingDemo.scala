@@ -42,6 +42,8 @@ object SparklingDemo {
     val demo:Demo = conf.demoName match {
       case "prostate" => ProstateDemo
       case "airlines" => AirlinesDemo
+      case "airlinesGBM" => AirlinesDemo
+      case "airlinesDRF" => AirlinesDemoDRF
       case s => throw new IllegalArgumentException("Unknown demo name: " + s)
     }
     Log.info("Demo configuration: " + conf)

@@ -60,7 +60,7 @@ trait Demo {
       //.set("spark.kryo.registrator", "water.sparkling.KryoSerialRegistrator")
       .set("spark.executor.memory", "1g")
     if (!local) // Run 'sbt assembly to produce target/scala-2.10/h2o-sparkling-demo-assembly-1.0.jar
-      conf.setJars(Seq("target/scala-2.10/h2o-sparkling-demo-assembly-1.0.jar"))
+      conf.setJars(Seq("target/scala-2.10/h2o-sparkling-demo-assembly-1.0.0.jar"))
 
     Log.info("Creating " + (if (local) "LOCAL" else "REMOTE ("+master+")") + " Spark context." )
     new SparkContext(conf)
