@@ -5,9 +5,9 @@ import water.fvec.Frame
 import water.util.Log
 
 object ProstateDemo extends Demo {
-  override def run(conf: DemoConf): Unit = prostateDemo(frameExtractor=conf.extractor, local=conf.local)
+  override def run(conf: DemoConf): Unit = prostateDemo(frameExtractor=conf.extractor, sparkMaster = if (conf.local) null else conf.sparkMaster)
 
-  def prostateDemo(frameExtractor:RDDFrameExtractor = DummyFrameExtractor, local:Boolean = true):Unit = {
+  def prostateDemo(frameExtractor:RDDFrameExtractor, sparkMaster:String):Unit = {
     // Specifies how data are extracted from RDD into Frame
     val fextract  = frameExtractor
 
@@ -19,7 +19,7 @@ object ProstateDemo extends Demo {
     val query = "SELECT * FROM prostate_table WHERE capsule=1"
 
     // Connect to shark cluster and make a query over prostate, transfer data into H2O
-    val frame:Frame = executeSpark[Prostate](dataset, rowParser, fextract, tableName, query, local=local)
+    val frame:Frame = executeSpark[Prostate](dataset, rowParser, fextract, tableName, query, sparkMaster=sparkMaster)
 
     Log.info("Extracted frame from Spark: ")
     Log.info(if (frame!=null) frame.toString + "\nRows: " + frame.numRows() else "<nothing>")

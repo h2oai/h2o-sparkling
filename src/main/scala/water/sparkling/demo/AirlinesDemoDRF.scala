@@ -18,7 +18,7 @@ object AirlinesDemoDRF extends Demo {
     val query = """SELECT * FROM airlines_table WHERE dest="SFO" """
 
     // Connect to shark cluster and make a query over prostate, transfer data into H2O
-    val frame:Frame = executeSpark[Airlines](dataset, rowParser, conf.extractor, tableName, query, local=conf.local)
+    val frame:Frame = executeSpark[Airlines](dataset, rowParser, conf.extractor, tableName, query, sparkMaster= if (conf.local) null else conf.sparkMaster)
     Log.info("Extracted frame from Spark: ")
     Log.info(if (frame!=null) frame.toString + "\nRows: " + frame.numRows() else "<nothing>")
 

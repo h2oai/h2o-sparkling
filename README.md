@@ -90,6 +90,12 @@ sbt runH2O
  sbt assembly
  sbt "run --remote --extractor=tachyon"
  ```
+ 
+ 
+ Run airlines demo with file-based extractor againts remote Spark cloud running on non-default location:
+ ```
+ sbt "run --remote --sparkMaster=spark://localhost:17077 --noshutdown --demo=airlines --extractor=file"
+ ```
 
 ## Doc
 

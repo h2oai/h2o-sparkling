@@ -13,13 +13,13 @@ trait Demo {
   def name:String
   def run(conf: DemoConf)
 
-  def executeSpark[S <: Product : ClassTag : TypeTag](dataset: String, rowParser: Parser[S], frameExtractor: RDDFrameExtractor, tableName: String, query: String, local: Boolean = true, hasHeader: Boolean = true): Frame = {
+  def executeSpark[S <: Product : ClassTag : TypeTag](dataset: String, rowParser: Parser[S], frameExtractor: RDDFrameExtractor, tableName: String, query: String, sparkMaster:String = null, hasHeader: Boolean = true): Frame = {
     Log.info("Data : " + dataset)
     Log.info("Table: " + tableName)
     Log.info("Query: " + query)
-    Log.info("Spark: " + (if (local) "LOCAL" else "REMOTE"))
+    Log.info("Spark: " + (if (sparkMaster==null) "LOCAL" else "REMOTE"))
 
-    val sc = createSparkContext(local)
+    val sc = createSparkContext(sparkMaster)
     val data = sc.textFile(dataset,2).cache()
 
     // SQL query over RDD
@@ -51,8 +51,9 @@ trait Demo {
     f // return value
   }
 
-  private def createSparkContext(local:Boolean = true): SparkContext = {
-    val master = if (local) "local" else "spark://localhost:7077"
+  private def createSparkContext(sparkMaster:String = null): SparkContext = {
+    val local = sparkMaster == null
+    val master = if (local) "local" else sparkMaster
     val conf = new SparkConf()
       .setMaster(master)
       .setAppName(SparklingDemo.APP_NAME+"@"+name)

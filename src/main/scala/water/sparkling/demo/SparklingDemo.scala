@@ -56,6 +56,8 @@ object SparklingDemo {
     var shutdown:Boolean = true
     var demoName = "prostate"
     val demoRegexp = """--demo=([a-zA-Z]*)""".r
+    var sparkMaster = "spark://localhost:7077"
+    val sparkMasterRegexp = """--sparkMaster=(spark://[a-zA-Z0-9]*:[0-9]+)""".r
     args.foreach(param => {
       param match {
         case "--local"  => local = true
@@ -66,15 +68,16 @@ object SparklingDemo {
         case "--shutdown" => shutdown = true
         case "--noshutdown" => shutdown = false
         case demoRegexp(m) => demoName = m
+        case sparkMasterRegexp(m) => sparkMaster = m
       }
     })
     println(demoName)
     // return config
-    DemoConf(demoName, local, extractor, shutdown)
+    DemoConf(demoName, local, sparkMaster, extractor, shutdown)
   }
 }
 
 class SparklingDemo {
 }
 
-case class DemoConf(demoName:String, local:Boolean = true, extractor: RDDFrameExtractor = FileBasedFrameExtractor, shutdown:Boolean = true)
+case class DemoConf(demoName:String, local:Boolean, sparkMaster:String, extractor: RDDFrameExtractor, shutdown:Boolean)
