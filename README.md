@@ -1,3 +1,6 @@
+# This repository is DEPRECATED! Please use the new Sparkling Water repository https://github.com/h2oai/sparkling-water!
+-------------------
+
 h2o-sparkling
 =============
 
